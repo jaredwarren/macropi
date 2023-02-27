@@ -271,7 +271,6 @@ var (
 	RMeta  Modifier = Modifier(0x80)
 )
 
-// https://stackoverflow.com/questions/66671427/multiple-modifiers-2-in-keyboard-input-report-for-custom-hid-keyboard
 type Key byte
 type Modifier byte
 type Input []byte
@@ -283,18 +282,24 @@ func GetReleaseAllKeys() Input {
 func GetPressKey(key Key, mod Modifier) []Input {
 	k := Input{byte(mod), Nil, byte(key), Nil, Nil, Nil, Nil, Nil}
 	fmt.Printf("KEY:%X, %X -> %+v\n", key, mod, k)
-	// // TEST
-	// for _, v := range k {
-	// 	fmt.Printf("%X,", v)
-	// }
-	// fmt.Println()
-	//
 	return []Input{k}
 }
 
 func GetPressAndReleaseKey(key Key, mod Modifier) []Input {
 	k := GetPressKey(key, mod)
 	return append(k, ReleaseAll)
+}
+
+func PressAndHoldKey(w io.Writer, key Key, mod Modifier) {
+	RunInput(w, GetPressKey(MuteKey, NoMod))
+}
+
+func PressAndReleaseKey(w io.Writer, key Key, mod Modifier) {
+	RunInput(w, GetPressAndReleaseKey(MuteKey, NoMod))
+}
+
+func ReleaseAllKeys(w io.Writer, key Key, mod Modifier) {
+	RunInput(w, []Input{ReleaseAll})
 }
 
 // TODO: figure out how to sleep
@@ -308,120 +313,63 @@ func RunInput(w io.Writer, in []Input) {
 	}
 }
 
+type StdWriter struct{}
+
+func (s *StdWriter) Write(p []byte) (n int, err error) {
+	return fmt.Println(p)
+}
+
 func main() {
+	var w io.Writer
 	hidfp, err := os.OpenFile("/dev/hidg0", os.O_RDWR|os.O_CREATE, 0666)
 	if err != nil {
-		panic(err)
+		w = &StdWriter{}
+	} else {
+		w = hidfp
+		defer hidfp.Close()
 	}
-	defer hidfp.Close()
 
 	fmt.Println("starting...")
 	time.Sleep(3 * time.Second)
 	fmt.Println("go!")
 
-	{
-		i := GetPressAndReleaseKey(MuteKey, NoMod)
-		RunInput(hidfp, i)
-	}
+	i := StringToInput("aAaBbbB")
+	RunInput(w, i)
+	time.Sleep(2 * time.Second)
+	return
+
+	PressAndReleaseKey(w, MuteKey, NoMod)
 	time.Sleep(2 * time.Second)
 
-	{
-		i := GetPressAndReleaseKey(VoluemUpKey, NoMod)
-		RunInput(hidfp, i)
-	}
+	PressAndReleaseKey(w, VoluemUpKey, NoMod)
 	time.Sleep(2 * time.Second)
 
-	{
-		i := GetPressAndReleaseKey(AKey, RShift)
-		RunInput(hidfp, i)
-	}
+	PressAndReleaseKey(w, AKey, RShift)
 	time.Sleep(2 * time.Second)
-	{
-		i := GetPressAndReleaseKey(AKey, NoMod)
-		RunInput(hidfp, i)
-	}
+
+	PressAndReleaseKey(w, AKey, NoMod)
 	time.Sleep(2 * time.Second)
-	{
-		i := GetPressAndReleaseKey(AKey, LShift|RCtrl)
-		RunInput(hidfp, i)
-	}
 
-	if true {
-		return
-	}
-
-	a := uint8(0x04)
-	nilC := uint8(0x00)
-	s := uint8(0x20)
-	one := uint8(0x1e)
-
-	// shift (right?)
-	fmt.Println([]byte(" \x00\x04\x00\x00\x00\x00\x00"))
-	fmt.Println([]byte("\x20\x00\x04\x00\x00\x00\x00\x00")) // 32 dec = 20 hex -> {space-char} -> 32d
-
-	// {space}
-	fmt.Println([]byte("\x00\x00,\x00\x00\x00\x00\x00"))
-	fmt.Println([]byte("\x00\x00\x2c\x00\x00\x00\x00\x00")) // 2c hex = 44 dec
-
-	fmt.Println([]byte("\x00\x00\x04\x00\x00\x00\x00\x00"))
-	fmt.Println([]byte{nilC, nilC, a, nilC, nilC, nilC, nilC, nilC})
-
-	fmt.Println("--")
-	fmt.Println([]byte("\x20\x00\x04\x00\x00\x00\x00\x00")) // 32 dec = 20 hex -> {space-char} -> 32d
-	fmt.Println([]byte{s, nilC, a, nilC, nilC, nilC, nilC, nilC})
-	fmt.Println([]byte{nilC, nilC, one, nilC, nilC, nilC, nilC, nilC})
-
-	if true {
-		return
-	}
-
-	// a
-	{
-		n, err := hidfp.Write([]byte("\x00\x00\x04\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
-	// release
-	{
-		n, err := hidfp.Write([]byte("\x00\x00\x00\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
-
-	// A
-	{
-		n, err := hidfp.Write([]byte(" \x00\x04\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
-	// {space}
-	{
-		n, err := hidfp.Write([]byte("\x00\x00,\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
-	// b
-	{
-		n, err := hidfp.Write([]byte("\x00\x00\x06\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
-	// release
-	{
-		n, err := hidfp.Write([]byte("\x00\x00\x00\x00\x00\x00\x00\x00"))
-		if err != nil {
-			fmt.Println("err:", err.Error())
-		}
-		fmt.Println("Write:", n)
-	}
+	PressAndReleaseKey(w, AKey, LShift|RCtrl)
 }
+
+func StringToInput(in string) []Input {
+	resp := []Input{}
+
+	for _, v := range in {
+		// resp = append(resp, CharMap[v], ReleaseAll)
+		fmt.Println(string(v), CharMap[v])
+		resp = append(resp, CharMap[v])
+	}
+
+	return resp
+}
+
+var (
+	CharMap map[rune]Input = map[rune]Input{
+		'a': {Nil, Nil, byte(AKey), Nil, Nil, Nil, Nil, Nil},
+		'A': {byte(LShift), Nil, byte(AKey), Nil, Nil, Nil, Nil, Nil},
+		'b': {Nil, Nil, byte(BKey), Nil, Nil, Nil, Nil, Nil},
+		'B': {byte(LShift), Nil, byte(BKey), Nil, Nil, Nil, Nil, Nil},
+	}
+)
