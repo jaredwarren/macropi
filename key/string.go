@@ -1,0 +1,121 @@
+package key
+
+import "fmt"
+
+func StringToInput(in string) []Input {
+	resp := []Input{}
+
+	for _, v := range in {
+		fmt.Println(string(v), CharMap[v])
+		resp = append(resp, CharMap[v], ReleaseAll)
+	}
+
+	return resp
+}
+
+var (
+	CharMap map[rune]Input = map[rune]Input{
+		'A': {byte(LShift), Nil, byte(AKey), Nil, Nil, Nil, Nil, Nil},
+		'B': {byte(LShift), Nil, byte(BKey), Nil, Nil, Nil, Nil, Nil},
+		'C': {byte(LShift), Nil, byte(CKey), Nil, Nil, Nil, Nil, Nil},
+		'D': {byte(LShift), Nil, byte(DKey), Nil, Nil, Nil, Nil, Nil},
+		'E': {byte(LShift), Nil, byte(EKey), Nil, Nil, Nil, Nil, Nil},
+		'F': {byte(LShift), Nil, byte(FKey), Nil, Nil, Nil, Nil, Nil},
+		'G': {byte(LShift), Nil, byte(GKey), Nil, Nil, Nil, Nil, Nil},
+		'H': {byte(LShift), Nil, byte(HKey), Nil, Nil, Nil, Nil, Nil},
+		'I': {byte(LShift), Nil, byte(IKey), Nil, Nil, Nil, Nil, Nil},
+		'J': {byte(LShift), Nil, byte(JKey), Nil, Nil, Nil, Nil, Nil},
+		'K': {byte(LShift), Nil, byte(KKey), Nil, Nil, Nil, Nil, Nil},
+		'L': {byte(LShift), Nil, byte(LKey), Nil, Nil, Nil, Nil, Nil},
+		'M': {byte(LShift), Nil, byte(MKey), Nil, Nil, Nil, Nil, Nil},
+		'N': {byte(LShift), Nil, byte(NKey), Nil, Nil, Nil, Nil, Nil},
+		'O': {byte(LShift), Nil, byte(OKey), Nil, Nil, Nil, Nil, Nil},
+		'P': {byte(LShift), Nil, byte(PKey), Nil, Nil, Nil, Nil, Nil},
+		'Q': {byte(LShift), Nil, byte(QKey), Nil, Nil, Nil, Nil, Nil},
+		'R': {byte(LShift), Nil, byte(RKey), Nil, Nil, Nil, Nil, Nil},
+		'S': {byte(LShift), Nil, byte(SKey), Nil, Nil, Nil, Nil, Nil},
+		'T': {byte(LShift), Nil, byte(TKey), Nil, Nil, Nil, Nil, Nil},
+		'U': {byte(LShift), Nil, byte(UKey), Nil, Nil, Nil, Nil, Nil},
+		'V': {byte(LShift), Nil, byte(VKey), Nil, Nil, Nil, Nil, Nil},
+		'W': {byte(LShift), Nil, byte(WKey), Nil, Nil, Nil, Nil, Nil},
+		'X': {byte(LShift), Nil, byte(XKey), Nil, Nil, Nil, Nil, Nil},
+		'Y': {byte(LShift), Nil, byte(YKey), Nil, Nil, Nil, Nil, Nil},
+		'Z': {byte(LShift), Nil, byte(ZKey), Nil, Nil, Nil, Nil, Nil},
+		'!': {byte(LShift), Nil, byte(OneKey), Nil, Nil, Nil, Nil, Nil},
+		'@': {byte(LShift), Nil, byte(TwoKey), Nil, Nil, Nil, Nil, Nil},
+		'#': {byte(LShift), Nil, byte(ThreeKey), Nil, Nil, Nil, Nil, Nil},
+		'$': {byte(LShift), Nil, byte(FourKey), Nil, Nil, Nil, Nil, Nil},
+		'%': {byte(LShift), Nil, byte(FiveKey), Nil, Nil, Nil, Nil, Nil},
+		'^': {byte(LShift), Nil, byte(SixKey), Nil, Nil, Nil, Nil, Nil},
+		'&': {byte(LShift), Nil, byte(SevenKey), Nil, Nil, Nil, Nil, Nil},
+		'*': {byte(LShift), Nil, byte(EightKey), Nil, Nil, Nil, Nil, Nil},
+		'(': {byte(LShift), Nil, byte(NineKey), Nil, Nil, Nil, Nil, Nil},
+		')': {byte(LShift), Nil, byte(ZeroKey), Nil, Nil, Nil, Nil, Nil},
+
+		'a': {Nil, Nil, byte(AKey), Nil, Nil, Nil, Nil, Nil},
+		'b': {Nil, Nil, byte(BKey), Nil, Nil, Nil, Nil, Nil},
+		'c': {Nil, Nil, byte(CKey), Nil, Nil, Nil, Nil, Nil},
+		'd': {Nil, Nil, byte(DKey), Nil, Nil, Nil, Nil, Nil},
+		'e': {Nil, Nil, byte(EKey), Nil, Nil, Nil, Nil, Nil},
+		'f': {Nil, Nil, byte(FKey), Nil, Nil, Nil, Nil, Nil},
+		'g': {Nil, Nil, byte(GKey), Nil, Nil, Nil, Nil, Nil},
+		'h': {Nil, Nil, byte(HKey), Nil, Nil, Nil, Nil, Nil},
+		'i': {Nil, Nil, byte(IKey), Nil, Nil, Nil, Nil, Nil},
+		'j': {Nil, Nil, byte(JKey), Nil, Nil, Nil, Nil, Nil},
+		'k': {Nil, Nil, byte(KKey), Nil, Nil, Nil, Nil, Nil},
+		'l': {Nil, Nil, byte(LKey), Nil, Nil, Nil, Nil, Nil},
+		'm': {Nil, Nil, byte(MKey), Nil, Nil, Nil, Nil, Nil},
+		'n': {Nil, Nil, byte(NKey), Nil, Nil, Nil, Nil, Nil},
+		'o': {Nil, Nil, byte(OKey), Nil, Nil, Nil, Nil, Nil},
+		'p': {Nil, Nil, byte(PKey), Nil, Nil, Nil, Nil, Nil},
+		'q': {Nil, Nil, byte(QKey), Nil, Nil, Nil, Nil, Nil},
+		'r': {Nil, Nil, byte(RKey), Nil, Nil, Nil, Nil, Nil},
+		's': {Nil, Nil, byte(SKey), Nil, Nil, Nil, Nil, Nil},
+		't': {Nil, Nil, byte(TKey), Nil, Nil, Nil, Nil, Nil},
+		'u': {Nil, Nil, byte(UKey), Nil, Nil, Nil, Nil, Nil},
+		'v': {Nil, Nil, byte(VKey), Nil, Nil, Nil, Nil, Nil},
+		'w': {Nil, Nil, byte(WKey), Nil, Nil, Nil, Nil, Nil},
+		'x': {Nil, Nil, byte(XKey), Nil, Nil, Nil, Nil, Nil},
+		'y': {Nil, Nil, byte(YKey), Nil, Nil, Nil, Nil, Nil},
+		'z': {Nil, Nil, byte(ZKey), Nil, Nil, Nil, Nil, Nil},
+		'1': {Nil, Nil, byte(OneKey), Nil, Nil, Nil, Nil, Nil},
+		'2': {Nil, Nil, byte(TwoKey), Nil, Nil, Nil, Nil, Nil},
+		'3': {Nil, Nil, byte(ThreeKey), Nil, Nil, Nil, Nil, Nil},
+		'4': {Nil, Nil, byte(FourKey), Nil, Nil, Nil, Nil, Nil},
+		'5': {Nil, Nil, byte(FiveKey), Nil, Nil, Nil, Nil, Nil},
+		'6': {Nil, Nil, byte(SixKey), Nil, Nil, Nil, Nil, Nil},
+		'7': {Nil, Nil, byte(SevenKey), Nil, Nil, Nil, Nil, Nil},
+		'8': {Nil, Nil, byte(EightKey), Nil, Nil, Nil, Nil, Nil},
+		'9': {Nil, Nil, byte(NineKey), Nil, Nil, Nil, Nil, Nil},
+		'0': {Nil, Nil, byte(ZeroKey), Nil, Nil, Nil, Nil, Nil},
+
+		' ':  {Nil, Nil, byte(SPACEKey), Nil, Nil, Nil, Nil, Nil},
+		'-':  {Nil, Nil, byte(MINUSKey), Nil, Nil, Nil, Nil, Nil},
+		'=':  {Nil, Nil, byte(EQUALKey), Nil, Nil, Nil, Nil, Nil},
+		'[':  {Nil, Nil, byte(LEFTBRACEKey), Nil, Nil, Nil, Nil, Nil},
+		']':  {Nil, Nil, byte(RIGHTBRACEKey), Nil, Nil, Nil, Nil, Nil},
+		'\\': {Nil, Nil, byte(BACKSLASHKey), Nil, Nil, Nil, Nil, Nil},
+		';':  {Nil, Nil, byte(SEMICOLONKey), Nil, Nil, Nil, Nil, Nil},
+		'\'': {Nil, Nil, byte(APOSTROPHEKey), Nil, Nil, Nil, Nil, Nil},
+		'`':  {Nil, Nil, byte(GRAVEKey), Nil, Nil, Nil, Nil, Nil},
+		',':  {Nil, Nil, byte(COMMAKey), Nil, Nil, Nil, Nil, Nil},
+		'.':  {Nil, Nil, byte(DOTKey), Nil, Nil, Nil, Nil, Nil},
+		'/':  {Nil, Nil, byte(SLASHKey), Nil, Nil, Nil, Nil, Nil},
+
+		'_': {byte(LShift), Nil, byte(MINUSKey), Nil, Nil, Nil, Nil, Nil},
+		'+': {byte(LShift), Nil, byte(EQUALKey), Nil, Nil, Nil, Nil, Nil},
+		'{': {byte(LShift), Nil, byte(LEFTBRACEKey), Nil, Nil, Nil, Nil, Nil},
+		'}': {byte(LShift), Nil, byte(RIGHTBRACEKey), Nil, Nil, Nil, Nil, Nil},
+		'|': {byte(LShift), Nil, byte(BACKSLASHKey), Nil, Nil, Nil, Nil, Nil},
+		':': {byte(LShift), Nil, byte(SEMICOLONKey), Nil, Nil, Nil, Nil, Nil},
+		'"': {byte(LShift), Nil, byte(APOSTROPHEKey), Nil, Nil, Nil, Nil, Nil},
+		'~': {byte(LShift), Nil, byte(GRAVEKey), Nil, Nil, Nil, Nil, Nil},
+		'<': {byte(LShift), Nil, byte(COMMAKey), Nil, Nil, Nil, Nil, Nil},
+		'>': {byte(LShift), Nil, byte(DOTKey), Nil, Nil, Nil, Nil, Nil},
+		'?': {byte(LShift), Nil, byte(SLASHKey), Nil, Nil, Nil, Nil, Nil},
+
+		'\n': {Nil, Nil, byte(ENTERKey), Nil, Nil, Nil, Nil, Nil},
+		'\r': {Nil, Nil, byte(ENTERKey), Nil, Nil, Nil, Nil, Nil},
+		'\t': {Nil, Nil, byte(TABKey), Nil, Nil, Nil, Nil, Nil},
+	}
+)

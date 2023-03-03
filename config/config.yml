@@ -1,0 +1,22 @@
+allow_override: true
+beep: true
+db:
+    version: 2
+downloader: youtube-dl
+host: :8000
+https: true
+localtunnel:
+    enabled: false
+    host: asdffdsa
+log:
+    level: 0
+player:
+    loop: false
+    song_root: song_files
+    thumb_root: thumb_files
+    volume: "99"
+restart: false
+rfid-enabled: false
+startup:
+    file: sounds/windows-xp-startup.mp3
+    play: true
