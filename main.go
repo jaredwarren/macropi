@@ -11,7 +11,6 @@ import (
 	"github.com/jaredwarren/macroPi/log"
 	"github.com/jaredwarren/macroPi/server"
 	"github.com/jaredwarren/macroPi/usb"
-	"github.com/spf13/viper"
 )
 
 func main() {
@@ -21,21 +20,19 @@ func main() {
 	if err != nil {
 		logger.Fatal("Init", log.Error(err))
 	}
+	cfg := config.Get()
 
 	// Init Server
-	htmlServer := server.StartHTTPServer(&server.Config{
-		Host:         viper.GetString("host"),
-		ReadTimeout:  350 * time.Second,
-		WriteTimeout: 350 * time.Second,
-		// Db:           sdb,
+	htmlServer := server.HTMLServer{
 		Logger: logger,
-	})
+		Config: cfg.Host,
+		Macro:  cfg.Macro,
+	}
+	htmlServer.Start()
 	defer htmlServer.StopHTTPServer()
 
-	// Shutdown
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt)
-	<-sigChan
+	// Wait for Shutdown
+	WaitForInterupt()
 
 	logger.Info("main :shutting down")
 
@@ -71,4 +68,10 @@ func main() {
 	time.Sleep(2 * time.Second)
 
 	key.PressAndReleaseKey(w, key.AKey, key.LShift|key.RCtrl)
+}
+
+func WaitForInterupt() {
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	<-sigChan
 }

@@ -6,6 +6,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/jaredwarren/macroPi/macro"
+	"github.com/jaredwarren/macroPi/server"
 	"github.com/spf13/viper"
 )
 
@@ -13,6 +15,17 @@ const (
 	ConfigFile = "config"
 	ConfigPath = "./config"
 )
+
+// Create private data struct to hold config options.
+type Config struct {
+	Host     *server.Config `yaml:"host"`
+	Macro    *macro.Config  `yaml:"macro"`
+	Hostname string         `yaml:"hostname"`
+	Port     string         `yaml:"port"`
+}
+
+// Create a new config instance.
+var conf *Config
 
 // InitConfig load config file, write defaults if no file exists.
 func InitConfig() error {
@@ -31,7 +44,20 @@ func InitConfig() error {
 			return fmt.Errorf("error reading config: %w", err)
 		}
 	}
+
+	// Global Config
+	c := &Config{}
+	err := viper.Unmarshal(c)
+	if err != nil {
+		return err
+	}
+	conf = c
+
 	return nil
+}
+
+func Get() *Config {
+	return conf
 }
 
 // writeDefaultConfig Set then write config file.

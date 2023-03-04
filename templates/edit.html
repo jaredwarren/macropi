@@ -1,0 +1,14 @@
+{{define "base"}}
+<tr hx-trigger='cancel' class='editing' hx-get="/macro/1">
+    <td><input name='name' value='contact.name'></td>
+    <td><input name='email' value='contact.email'></td>
+    <td>
+        <button class="btn btn-danger" hx-get="/macro/1">
+            Cancel
+        </button>
+        <button class="btn btn-danger" hx-put="/cmacro/1" hx-include="closest tr">
+            Save
+        </button>
+    </td>
+</tr>
+{{end}}
