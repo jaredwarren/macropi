@@ -55,11 +55,14 @@ func (h *HTMLServer) Start() {
 	r.HandleFunc("/macros", ListMacros).Methods(http.MethodGet)
 
 	macsub := r.PathPrefix("/macro/{macro_id}").Subrouter()
+
+	// htmx
 	macsub.HandleFunc("", ShowMacroForm).Methods(http.MethodGet)
 	macsub.HandleFunc("/edit", GetEditMacroForm).Methods(http.MethodGet)
 
 	macsub.HandleFunc("", UpdateMacro).Methods(http.MethodPost, http.MethodPut)
 	macsub.HandleFunc("", DeleteMacro).Methods(http.MethodDelete)
+
 	macsub.HandleFunc("/run", RunMacro).Methods(http.MethodGet)
 
 	h.server = &http.Server{

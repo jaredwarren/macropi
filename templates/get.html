@@ -1,0 +1,11 @@
+{{define "base"}}
+<tr>
+    <td>{{.macro.Label}}</td>
+    <td>{{.macro.Command}}</td>
+    <td>
+        <button hx-get="/macro/{{.id}}/edit" class="btn btn-primary">
+            Edit
+        </button>
+    </td>
+</tr>
+{{end}}

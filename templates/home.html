@@ -3,19 +3,11 @@
 {{define "title"}}{{.title}}{{end}}
 
 {{define "main"}}
-<div hx-target="this" hx-swap="outerHTML">
-    <div><label>First Name</label>: Joe</div>
-    <div><label>Last Name</label>: Blow</div>
-    <div><label>Email</label>: joe@blow.com</div>
-    <button hx-get="/contact/1/edit" class="btn btn-primary">
-        Click To Edit
-    </button>
-</div>
 <table class="table edit-row-example">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Email</th>
+            <th>Label</th>
+            <th>Command</th>
             <th></th>
         </tr>
     </thead>
@@ -25,7 +17,7 @@
             <td>{{$s.Label}}</td>
             <td>{{$s.Command}}</td>
             <td>
-                <button hx-get="/macro/1/edit" class="btn btn-primary">
+                <button hx-get="/macro/{{$index}}/edit" class="btn btn-primary">
                      Edit
                 </button>
             </td>

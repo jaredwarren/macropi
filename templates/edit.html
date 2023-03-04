@@ -1,12 +1,12 @@
 {{define "base"}}
-<tr hx-trigger='cancel' class='editing' hx-get="/macro/1">
-    <td><input name='name' value='contact.name'></td>
-    <td><input name='email' value='contact.email'></td>
+<tr hx-trigger='cancel' class='editing' hx-get="/macro/{{.id}}">
+    <td><input name='label' value='{{.macro.Label}}'></td>
+    <td><input name='command' value='{{.macro.Command}}'></td>
     <td>
-        <button class="btn btn-danger" hx-get="/macro/1">
+        <button class="btn btn-danger" hx-get="/macro/{{.id}}">
             Cancel
         </button>
-        <button class="btn btn-danger" hx-put="/cmacro/1" hx-include="closest tr">
+        <button class="btn btn-success" hx-put="/macro/{{.id}}" hx-include="closest tr">
             Save
         </button>
     </td>

@@ -53,6 +53,8 @@ func InitConfig() error {
 	}
 	conf = c
 
+	macro.InitMacros(c.Macro.Macros)
+
 	return nil
 }
 
