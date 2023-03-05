@@ -1,16 +1,23 @@
-host: 
-  addr: :8005
-  https: false
-#
+host:
+    addr: :8005
+    https: false
 keys:
- - home
-
+    - home
 macro:
-  macros:
-    - label: asdf_label
-      command: asdf
-    - label: another_label
-      command: another_command
-
-#
-
+    macros:
+        - label: my_label
+          command: asdf_updated
+        - label: another_label
+          command: another_command
+        - label: new_macro label
+          command: new macro command
+        - label: "2"
+          command: "2"
+        - label: "3"
+          command: "3"
+        - label: "44"
+          command: "44"
+        - label: "5"
+          command: "5"
+        - label: "6"
+          command: "6"

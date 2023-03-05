@@ -2,13 +2,24 @@
 
 {{define "title"}}{{.title}}{{end}}
 
+{{define "nav"}}
+<nav class="nav nav-pills justify-content-center">
+    <a class="nav-link active" aria-current="page" href="#">Macros</a>
+    <a class="nav-link" href="#">Keys</a>
+    <!-- <a class="nav-link" href="#">Link</a> -->
+    <!-- <a class="nav-link disabled">Disabled</a> -->
+</nav>
+{{end}}
+
+
 {{define "main"}}
 <table class="table edit-row-example">
     <thead>
         <tr>
             <th>Label</th>
             <th>Command</th>
-            <th></th>
+            <th>Edit</th>
+            <th>Run</th>
         </tr>
     </thead>
     <tbody hx-target="closest tr" hx-swap="outerHTML">
@@ -21,8 +32,26 @@
                      Edit
                 </button>
             </td>
+            <td>
+                <button hx-get="/macro/{{$index}}/run" class="btn btn-success">
+                    Run
+                </button>
+            </td>
         </tr>
         {{end}}
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+                <button hx-get="/macro/new/edit" class="btn btn-success">
+                    add
+                </button>
+            </td>
+        </tr>
     </tbody>
+    <tfoot hx-target="closest tr" hx-swap="outerHTML">
+       
+    </tfoot>
 </table>
 {{end}}

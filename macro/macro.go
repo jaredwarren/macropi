@@ -1,7 +1,6 @@
 package macro
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/spf13/viper"
@@ -44,19 +43,40 @@ func ListtMacros() []*Macro {
 	return macros
 }
 
-func UpdateMacro(id string, m *Macro) error {
-	om := GetMacro(id)
-	if om == nil {
-		return fmt.Errorf("hot found")
+func UpdateMacro(id string, m *Macro) (int, error) {
+	var i int
+	var err error
+	if id == "new" {
+		i = len(macros)
+	} else {
+		i, err = strconv.Atoi(id)
+		if err != nil {
+			return -1, err
+		}
 	}
-
-	om.Command = m.Command
-	om.Label = m.Label
+	if i >= len(macros) {
+		macros = append(macros, m)
+	} else {
+		macros[i] = m
+	}
 
 	// save
 	viper.Set("macro", Config{
 		Macros: macros,
 	})
+	return i, viper.WriteConfig()
+}
 
-	return nil
+func DeleteMacro(id string) error {
+	i, err := strconv.Atoi(id)
+	if err != nil {
+		return err
+	}
+
+	macros = append(macros[:i], macros[i+1:]...)
+	// save
+	viper.Set("macro", Config{
+		Macros: macros,
+	})
+	return viper.WriteConfig()
 }

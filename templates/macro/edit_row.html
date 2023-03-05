@@ -3,11 +3,14 @@
     <td><input name='label' value='{{.macro.Label}}'></td>
     <td><input name='command' value='{{.macro.Command}}'></td>
     <td>
-        <button class="btn btn-danger" hx-get="/macro/{{.id}}">
+        <button class="btn btn-secondary" hx-get="/macro/{{.id}}">
             Cancel
         </button>
         <button class="btn btn-success" hx-put="/macro/{{.id}}" hx-include="closest tr">
             Save
+        </button>
+        <button class="btn btn-danger" hx-confirm="Are you sure?" hx-delete="/macro/{{.id}}" hx-include="closest tr">
+            Delete
         </button>
     </td>
 </tr>
