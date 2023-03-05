@@ -1,23 +1,18 @@
 host:
     addr: :8005
     https: false
-keys:
-    - home
-macro:
-    macros:
-        - label: my_label
-          command: asdf_updated
-        - label: another_label
-          command: another_command
-        - label: new_macro label
-          command: new macro command
-        - label: "2"
-          command: "2"
-        - label: "3"
-          command: "3"
-        - label: "44"
-          command: "44"
-        - label: "5"
-          command: "5"
-        - label: "6"
-          command: "6"
+profiles:
+    p1:
+      label: my_label
+      keys:
+        key1:
+          gpio: '101010'
+          macro: asdf_updated
+    
+macros:
+    my_label:
+        label: my_label
+        command: asdf_updated
+    another_label:
+        label: another_label
+        command: another_command

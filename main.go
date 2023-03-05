@@ -26,7 +26,6 @@ func main() {
 	htmlServer := server.HTMLServer{
 		Logger: logger,
 		Config: cfg.Host,
-		Macro:  cfg.Macro,
 	}
 	htmlServer.Start()
 	defer htmlServer.StopHTTPServer()

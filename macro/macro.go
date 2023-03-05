@@ -1,80 +1,68 @@
 package macro
 
 import (
-	"strconv"
+	"fmt"
+	"regexp"
 
 	"github.com/spf13/viper"
 )
 
 type Macro struct {
-	id      int
+	ID      string `yaml:"label"`
 	Label   string `yaml:"label"`
 	Command string `yaml:"command"`
 }
 
 // Create private data struct to hold config options.
 type Config struct {
-	Macros []*Macro `yaml:"macros"`
+	Macros map[string]*Macro `yaml:"macros"`
 }
 
 var (
-	macros []*Macro
+	macros map[string]*Macro
 )
 
-func InitMacros(m []*Macro) {
-	for i, mm := range m {
-		mm.id = i
-	}
+func InitMacros(m map[string]*Macro) {
 	macros = m
 }
 
 func GetMacro(id string) *Macro {
-	i, err := strconv.Atoi(id)
-	if err != nil {
-		return nil
-	}
-	if i < len(macros) {
-		return macros[i]
+	if m, ok := macros[id]; ok {
+		return m
 	}
 	return nil
 }
 
-func ListtMacros() []*Macro {
+func ListtMacros() map[string]*Macro {
 	return macros
 }
 
-func UpdateMacro(id string, m *Macro) (int, error) {
-	var i int
-	var err error
+func UpdateMacro(id string, m *Macro) (string, error) {
 	if id == "new" {
-		i = len(macros)
-	} else {
-		i, err = strconv.Atoi(id)
-		if err != nil {
-			return -1, err
-		}
+		id = CleanID(id)
 	}
-	if i >= len(macros) {
-		macros = append(macros, m)
-	} else {
-		macros[i] = m
-	}
+	macros[id] = m
 
 	// save
-	viper.Set("macro", Config{
-		Macros: macros,
-	})
-	return i, viper.WriteConfig()
+	err := SaveAll()
+	return id, err
 }
 
 func DeleteMacro(id string) error {
-	i, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
+	delete(macros, id)
+	return SaveAll()
+}
 
-	macros = append(macros[:i], macros[i+1:]...)
-	// save
+func CleanID(dirty string) string {
+	re := regexp.MustCompile("[[:^ascii:]]")
+	t := re.ReplaceAllLiteralString(dirty, "")
+	if t == "" {
+		t = fmt.Sprintf("macro_%d", len(macros))
+	}
+	return t
+}
+
+func SaveAll() error {
 	viper.Set("macro", Config{
 		Macros: macros,
 	})

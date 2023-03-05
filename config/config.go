@@ -18,10 +18,10 @@ const (
 
 // Create private data struct to hold config options.
 type Config struct {
-	Host     *server.Config `yaml:"host"`
-	Macro    *macro.Config  `yaml:"macro"`
-	Hostname string         `yaml:"hostname"`
-	Port     string         `yaml:"port"`
+	Host     *server.Config          `yaml:"host"`
+	Macros   map[string]*macro.Macro `yaml:"macros"`
+	Hostname string                  `yaml:"hostname"`
+	Port     string                  `yaml:"port"`
 }
 
 // Create a new config instance.
@@ -53,7 +53,10 @@ func InitConfig() error {
 	}
 	conf = c
 
-	macro.InitMacros(c.Macro.Macros)
+	fmt.Printf("~~~~~~~~~~~~~~~\n %+v\n\n", c)
+	fmt.Printf("~~~~~~~~~~~~~~~\n %+v\n\n", c.Macros)
+
+	macro.InitMacros(c.Macros)
 
 	return nil
 }

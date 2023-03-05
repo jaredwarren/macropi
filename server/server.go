@@ -10,7 +10,6 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/jaredwarren/macroPi/log"
-	"github.com/jaredwarren/macroPi/macro"
 	"github.com/spf13/viper"
 )
 
@@ -29,7 +28,6 @@ type Config struct {
 type HTMLServer struct {
 	Logger log.Logger
 	Config *Config
-	Macro  *macro.Config
 
 	server *http.Server
 	wg     sync.WaitGroup
@@ -52,6 +50,10 @@ func (h *HTMLServer) Start() {
 	// CRUD profile(note: switch profile key is a "macro")
 	r.HandleFunc("/", ListMacros).Methods(http.MethodGet)
 
+	// r.HandleFunc("/keys", ListKeys).Methods(http.MethodGet)
+	//
+	// Macros
+	//
 	r.HandleFunc("/macros", ListMacros).Methods(http.MethodGet)
 
 	macsub := r.PathPrefix("/macro/{macro_id}").Subrouter()
