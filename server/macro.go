@@ -5,6 +5,7 @@ import (
 	"html/template"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/jaredwarren/macroPi/log"
 	"github.com/jaredwarren/macroPi/macro"
@@ -16,13 +17,19 @@ const (
 
 type GenericPage map[string]any
 
-func ListMacros(w http.ResponseWriter, r *http.Request) {
+func (h *HTMLServer) ListMacros(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := log.GetLogger(ctx)
 	homepageTpl := template.Must(template.New("base").ParseFiles(
 		"templates/base.html",
 		"templates/home.html",
 	))
 
-	ms := macro.ListtMacros()
+	ms, err := h.DB.ListtMacros()
+	if err != nil {
+		logger.Error("ListMacro error", log.Error(err))
+		// What to return here!
+	}
 
 	render(w, r, homepageTpl, &GenericPage{
 		"title":  "home",
@@ -30,23 +37,25 @@ func ListMacros(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// func ListMacros(w http.ResponseWriter, r *http.Request) {
-// 	homepageTpl := template.Must(template.ParseFiles(
-// 		"templates/home.html",
-// 		"templates/base.html",
-// 	))
-// 	render(w, r, homepageTpl, nil)
-// }
+func (h *HTMLServer) GetMacroEditRowForm(w http.ResponseWriter, r *http.Request) {
+	ctx := r.Context()
+	logger := log.GetLogger(ctx)
 
-func GetMacroEditRowForm(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	macroID := vars["macro_id"]
+	logger = logger.With(log.Any("id", macroID))
+	isNew := macroID == "new"
 
 	var m *macro.Macro
-	if macroID == "new" {
+	if isNew {
 		m = &macro.Macro{}
 	} else {
-		m = macro.GetMacro(macroID)
+		m, err := h.DB.GetMacro(macroID)
+		if err != nil {
+			logger.Error("GetMacro error", log.Error(err))
+			renderError(EditRowErrorTemplate, fmt.Errorf("not found"), w, r)
+			return
+		}
 		if m == nil {
 			renderError(EditRowErrorTemplate, fmt.Errorf("not found"), w, r)
 			return
@@ -60,19 +69,37 @@ func GetMacroEditRowForm(w http.ResponseWriter, r *http.Request) {
 	render(w, r, homepageTpl, &GenericPage{
 		"id":    macroID,
 		"macro": m,
+		"isNew": isNew,
 	})
 }
 
-func GetMacroRow(w http.ResponseWriter, r *http.Request) {
+func (h *HTMLServer) GetMacroRow(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := log.GetLogger(ctx)
 
 	vars := mux.Vars(r)
 	macroID := vars["macro_id"]
+	logger = logger.With(log.Any("id", macroID))
 
-	m := macro.GetMacro(macroID)
+	// show "add new" button if adding a new macro
+	if macroID == "new" {
+		homepageTpl := template.Must(template.New("base").ParseFiles(
+			"templates/macro/edit_row_new.html",
+		))
+
+		render(w, r, homepageTpl, &GenericPage{
+			"err": "",
+		})
+		return
+	}
+
+	m, err := h.DB.GetMacro(macroID)
+	if err != nil {
+		logger.Error("GetMacro error", log.Error(err))
+		renderError(EditRowErrorTemplate, fmt.Errorf("not found"), w, r)
+		return
+	}
 	if m == nil {
-		logger.Error("GetMacro error", log.Any("id", macroID))
 		renderError(EditRowErrorTemplate, fmt.Errorf("not found"), w, r)
 		return
 	}
@@ -87,13 +114,17 @@ func GetMacroRow(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func UpdateMacro(w http.ResponseWriter, r *http.Request) {
+func (h *HTMLServer) UpdateMacro(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := log.GetLogger(ctx)
 
 	vars := mux.Vars(r)
 	macroID := vars["macro_id"]
 	isNew := (macroID == "new")
+	if isNew {
+		macroID = uuid.New().String()
+	}
+	logger = logger.With(log.Any("id", macroID), log.Any("is_new", isNew))
 
 	err := r.ParseForm()
 	if err != nil {
@@ -108,7 +139,9 @@ func UpdateMacro(w http.ResponseWriter, r *http.Request) {
 		Label:   label,
 		Command: command,
 	}
-	i, err := macro.UpdateMacro(macroID, om)
+	logger = logger.With(log.Any("macro", om))
+
+	err = h.DB.UpdateMacro(macroID, om)
 	if err != nil {
 		logger.Error("UpdateMacro error", log.Error(err))
 		renderError(EditRowErrorTemplate, err, w, r)
@@ -116,10 +149,12 @@ func UpdateMacro(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// update id in vars, specifically for "new"
-	vars["macro_id"] = fmt.Sprintf("%d", i)
+	vars["macro_id"] = macroID
 	mux.SetURLVars(r, vars)
 
-	GetMacroRow(w, r)
+	// return new or updated macro
+	h.GetMacroRow(w, r)
+	// show "add new" button if adding a new macro
 	if isNew {
 		homepageTpl := template.Must(template.New("base").ParseFiles(
 			"templates/macro/edit_row_new.html",
@@ -131,12 +166,13 @@ func UpdateMacro(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func DeleteMacro(w http.ResponseWriter, r *http.Request) {
+func (h *HTMLServer) DeleteMacro(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	logger := log.GetLogger(ctx)
 
 	vars := mux.Vars(r)
 	macroID := vars["macro_id"]
+	logger = logger.With(log.Any("id", macroID))
 
 	err := r.ParseForm()
 	if err != nil {
@@ -146,10 +182,11 @@ func DeleteMacro(w http.ResponseWriter, r *http.Request) {
 
 	label := r.PostForm.Get("label")
 	command := r.PostForm.Get("command")
+	logger = logger.With(log.Any("command", command), log.Any("label", label))
 
-	logger.Error("Delete", log.Any("macroID", macroID), log.Any("command", command), log.Any("label", label))
+	logger.Error("Delete")
 
-	err = macro.DeleteMacro(macroID)
+	err = h.DB.DeleteMacro(macroID)
 	if err != nil {
 		renderError(EditRowErrorTemplate, err, w, r)
 		return

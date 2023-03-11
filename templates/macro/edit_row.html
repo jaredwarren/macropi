@@ -9,9 +9,11 @@
         <button class="btn btn-success" hx-put="/macro/{{.id}}" hx-include="closest tr">
             Save
         </button>
+        {{if not .isNew}}
         <button class="btn btn-danger" hx-confirm="Are you sure?" hx-delete="/macro/{{.id}}" hx-include="closest tr">
             Delete
         </button>
+        {{end}}
     </td>
 </tr>
 {{end}}

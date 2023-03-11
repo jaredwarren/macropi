@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/jaredwarren/macroPi/config"
+	"github.com/jaredwarren/macroPi/db"
 	"github.com/jaredwarren/macroPi/key"
 	"github.com/jaredwarren/macroPi/log"
 	"github.com/jaredwarren/macroPi/server"
@@ -18,14 +19,21 @@ func main() {
 
 	err := config.InitConfig()
 	if err != nil {
-		logger.Fatal("Init", log.Error(err))
+		logger.Fatal("Init Config", log.Error(err))
 	}
 	cfg := config.Get()
+
+	// init db
+	dbs, err := db.NewMacroDB(cfg.DB.Path)
+	if err != nil {
+		logger.Fatal("Init DB", log.Error(err))
+	}
 
 	// Init Server
 	htmlServer := server.HTMLServer{
 		Logger: logger,
 		Config: cfg.Host,
+		DB:     dbs,
 	}
 	htmlServer.Start()
 	defer htmlServer.StopHTTPServer()

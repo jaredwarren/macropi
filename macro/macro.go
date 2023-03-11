@@ -22,38 +22,38 @@ var (
 	macros map[string]*Macro
 )
 
-func InitMacros(m map[string]*Macro) {
+func XInitMacros(m map[string]*Macro) {
 	macros = m
 }
 
-func GetMacro(id string) *Macro {
+func XGetMacro(id string) *Macro {
 	if m, ok := macros[id]; ok {
 		return m
 	}
 	return nil
 }
 
-func ListtMacros() map[string]*Macro {
+func XListtMacros() map[string]*Macro {
 	return macros
 }
 
-func UpdateMacro(id string, m *Macro) (string, error) {
+func XUpdateMacro(id string, m *Macro) (string, error) {
 	if id == "new" {
-		id = CleanID(id)
+		id = XCleanID(id)
 	}
 	macros[id] = m
 
 	// save
-	err := SaveAll()
+	err := XSaveAll()
 	return id, err
 }
 
-func DeleteMacro(id string) error {
+func XDeleteMacro(id string) error {
 	delete(macros, id)
-	return SaveAll()
+	return XSaveAll()
 }
 
-func CleanID(dirty string) string {
+func XCleanID(dirty string) string {
 	re := regexp.MustCompile("[[:^ascii:]]")
 	t := re.ReplaceAllLiteralString(dirty, "")
 	if t == "" {
@@ -62,7 +62,7 @@ func CleanID(dirty string) string {
 	return t
 }
 
-func SaveAll() error {
+func XSaveAll() error {
 	viper.Set("macro", Config{
 		Macros: macros,
 	})

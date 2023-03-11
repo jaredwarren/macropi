@@ -1,6 +1,8 @@
 host:
     addr: :8005
     https: false
+db:
+  path: macro.db
 profiles:
     p1:
       label: my_label

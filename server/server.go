@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/jaredwarren/macroPi/db"
 	"github.com/jaredwarren/macroPi/log"
 	"github.com/spf13/viper"
 )
@@ -20,14 +21,14 @@ type Config struct {
 	Host         string
 	ReadTimeout  time.Duration
 	WriteTimeout time.Duration
-	// Db           db.DBer
-	Logger log.Logger
+	Logger       log.Logger
 }
 
 // HTMLServer represents the web service that serves up HTML
 type HTMLServer struct {
 	Logger log.Logger
 	Config *Config
+	DB     db.DBer
 
 	server *http.Server
 	wg     sync.WaitGroup
@@ -48,21 +49,21 @@ func (h *HTMLServer) Start() {
 	// home
 	// CRUD macro
 	// CRUD profile(note: switch profile key is a "macro")
-	r.HandleFunc("/", ListMacros).Methods(http.MethodGet)
+	r.HandleFunc("/", h.ListMacros).Methods(http.MethodGet)
 
 	// r.HandleFunc("/keys", ListKeys).Methods(http.MethodGet)
 	//
 	// Macros
 	//
-	r.HandleFunc("/macros", ListMacros).Methods(http.MethodGet)
+	r.HandleFunc("/macros", h.ListMacros).Methods(http.MethodGet)
 
 	macsub := r.PathPrefix("/macro/{macro_id}").Subrouter()
 
 	// htmx
-	macsub.HandleFunc("", GetMacroRow).Methods(http.MethodGet)
-	macsub.HandleFunc("/edit", GetMacroEditRowForm).Methods(http.MethodGet)
-	macsub.HandleFunc("", UpdateMacro).Methods(http.MethodPost, http.MethodPut)
-	macsub.HandleFunc("", DeleteMacro).Methods(http.MethodDelete)
+	macsub.HandleFunc("", h.GetMacroRow).Methods(http.MethodGet)
+	macsub.HandleFunc("/edit", h.GetMacroEditRowForm).Methods(http.MethodGet)
+	macsub.HandleFunc("", h.UpdateMacro).Methods(http.MethodPost, http.MethodPut)
+	macsub.HandleFunc("", h.DeleteMacro).Methods(http.MethodDelete)
 
 	// Run
 	macsub.HandleFunc("/run", RunMacro).Methods(http.MethodGet)
