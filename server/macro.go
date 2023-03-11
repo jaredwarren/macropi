@@ -50,7 +50,8 @@ func (h *HTMLServer) GetMacroEditRowForm(w http.ResponseWriter, r *http.Request)
 	if isNew {
 		m = &macro.Macro{}
 	} else {
-		m, err := h.DB.GetMacro(macroID)
+		var err error
+		m, err = h.DB.GetMacro(macroID)
 		if err != nil {
 			logger.Error("GetMacro error", log.Error(err))
 			renderError(EditRowErrorTemplate, fmt.Errorf("not found"), w, r)

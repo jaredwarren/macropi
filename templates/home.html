@@ -28,12 +28,12 @@
             <td>{{$s.Label}}</td>
             <td>{{$s.Command}}</td>
             <td>
-                <button hx-get="/macro/{{$index}}/edit" class="btn btn-primary">
+                <button hx-get="/macro/{{$s.ID}}/edit" class="btn btn-primary">
                      Edit
                 </button>
             </td>
             <td>
-                <button hx-get="/macro/{{$index}}/run" class="btn btn-success">
+                <button hx-get="/macro/{{$s.ID}}/run" class="btn btn-success">
                     Run
                 </button>
             </td>

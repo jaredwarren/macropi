@@ -12,7 +12,7 @@ import (
 var (
 	MacroBucket   = []byte("MacroBucket")
 	ProfileBucket = []byte("ProfileBucket")
-	ErrNotFound   = errors.New("something didn't work")
+	ErrNotFound   = errors.New("not found")
 )
 
 type DBer interface {
@@ -124,6 +124,7 @@ func (s *MacroDB) UpdateMacro(id string, m *macro.Macro) error {
 	if id == "" {
 		return fmt.Errorf("macro ID required")
 	}
+	m.ID = id
 	return s.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket(MacroBucket)
 

@@ -6,6 +6,8 @@
         <button class="btn btn-secondary" hx-get="/macro/{{.id}}">
             Cancel
         </button>
+    </td>
+    <td>
         <button class="btn btn-success" hx-put="/macro/{{.id}}" hx-include="closest tr">
             Save
         </button>
